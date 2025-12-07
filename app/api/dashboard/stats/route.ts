@@ -1,12 +1,13 @@
-import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth-config"
+import { NextRequest, NextResponse } from "next/server"
+import { getCurrentUser } from "@/lib/auth"
 import { prisma } from "@/lib/db/client"
 
-export async function GET() {
+export const dynamic = 'force-dynamic'
+
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
+    const user = await getCurrentUser(request)
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -17,7 +18,7 @@ export async function GET() {
 
     // Get current streak (longest active habit streak)
     const habits = await prisma.habit.findMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
     const maxStreak = habits.length > 0 
       ? Math.max(...habits.map(h => h.streak), 0)
@@ -26,7 +27,7 @@ export async function GET() {
     // Get tasks completed today
     const tasksCompleted = await prisma.task.count({
       where: {
-        userId: session.user.id,
+        userId: user.id,
         status: "COMPLETED",
         completedAt: {
           gte: today,
@@ -38,7 +39,7 @@ export async function GET() {
     // Get study time today (in minutes)
     const studySessions = await prisma.studySession.findMany({
       where: {
-        userId: session.user.id,
+        userId: user.id,
         createdAt: {
           gte: today,
           lt: tomorrow,
@@ -49,28 +50,21 @@ export async function GET() {
 
     // Get total points
     const rewards = await prisma.reward.findMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
     const points = rewards
       .filter((r) => r.type === "POINTS" && r.status === "COMPLETED")
       .reduce((sum, r) => sum + r.points, 0)
 
-    // Get today's tasks - show tasks due today OR tasks without dueDate (pending tasks)
+    // Get today's tasks - only show tasks due today (not yesterday's tasks)
     const tasks = await prisma.task.findMany({
       where: {
-        userId: session.user.id,
-        OR: [
-          {
-            dueDate: {
-              gte: today,
-              lt: tomorrow,
-            },
-          },
-          {
-            dueDate: null,
-            status: "PENDING",
-          },
-        ],
+        userId: user.id,
+        dueDate: {
+          gte: today,
+          lt: tomorrow,
+        },
+        status: "PENDING", // Only show pending tasks for today
       },
       orderBy: { createdAt: "desc" },
       take: 5,
@@ -79,7 +73,7 @@ export async function GET() {
     // Get upcoming exams (next 30 days)
     const upcomingExams = await prisma.exam.findMany({
       where: {
-        userId: session.user.id,
+        userId: user.id,
         date: {
           gte: today,
           lte: new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000),

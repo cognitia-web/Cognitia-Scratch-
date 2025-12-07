@@ -31,8 +31,8 @@ export default function CoursesPage() {
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch("/api/courses")
-      const data = await res.json()
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/courses")
       setCourses(data)
     } catch (error) {
       console.error("Failed to fetch courses:", error)
@@ -41,8 +41,8 @@ export default function CoursesPage() {
 
   const fetchMyCourses = async () => {
     try {
-      const res = await fetch("/api/courses/my-progress")
-      const data = await res.json()
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/courses/my-progress")
       setMyCourses(data)
     } catch (error) {
       console.error("Failed to fetch my courses:", error)

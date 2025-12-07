@@ -1,83 +1,44 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/db/client"
-import bcrypt from "bcryptjs"
-import crypto from "crypto"
 
-export async function POST(request: Request) {
+// This endpoint is called after Firebase user is created on client-side
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { name, email, password, age, guardianEmail } = body
+    const { email, name, age, guardianEmail, uid } = body
 
-    if (age < 13) {
+    if (!email || !name || !age || !uid) {
       return NextResponse.json(
-        { error: "Users must be at least 13 years old" },
+        { error: "Missing required fields" },
         { status: 400 }
       )
     }
 
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    })
-
-    if (existingUser) {
-      return NextResponse.json(
-        { error: "User already exists" },
-        { status: 400 }
-      )
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10)
-
-    // Create user
-    const userData: any = {
-      name,
-      email,
-      age: parseInt(age),
-      password: hashedPassword, // Store hashed password
-    }
-
-    // Handle guardian linking for users under 16
-    if (age < 16 && guardianEmail) {
-      let guardian = await prisma.guardian.findUnique({
-        where: { email: guardianEmail },
-      })
-
-      if (!guardian) {
-        // Generate OTP
-        const otpCode = crypto.randomInt(100000, 999999).toString()
-        const otpExpires = new Date(Date.now() + 15 * 60 * 1000) // 15 minutes
-
-        guardian = await prisma.guardian.create({
-          data: {
-            email: guardianEmail,
-            otpCode,
-            otpExpires,
-          },
+    // Create user in database (Firebase user already created on client)
+    const dbUser = await prisma.user.create({
+      data: {
+        id: uid,
+        email: email,
+        name: name,
+        age: parseInt(age),
+        role: "STUDENT",
+        ...(guardianEmail && parseInt(age) < 16 && {
+          guardian: {
+            create: {
+              email: guardianEmail,
+              name: "Guardian",
+            }
+          }
         })
-
-        // In production, send OTP email
-        console.log(`OTP for ${guardianEmail}: ${otpCode}`)
       }
-
-      userData.guardianId = guardian.id
-    }
-
-    const user = await prisma.user.create({
-      data: userData,
     })
 
-    return NextResponse.json(
-      { message: "User created successfully", userId: user.id },
-      { status: 201 }
-    )
+    return NextResponse.json({ user: dbUser }, { status: 201 })
   } catch (error: any) {
-    console.error("Signup error:", error)
+    console.error("Error creating user:", error)
     return NextResponse.json(
-      { error: error.message || "Internal server error" },
+      { error: error.message || "Failed to create account" },
       { status: 500 }
     )
   }
 }
-

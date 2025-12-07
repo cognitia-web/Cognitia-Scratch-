@@ -27,8 +27,8 @@ export default function GuardianPage() {
 
   const fetchReports = async () => {
     try {
-      const res = await fetch("/api/guardian/reports")
-      const data = await res.json()
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/guardian/reports")
       setReports(data.reports || [])
       setStudents(data.students || [])
     } catch (error) {

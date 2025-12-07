@@ -48,8 +48,8 @@ export default function DashboardPage() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch("/api/dashboard/stats")
-      const data = await res.json()
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/dashboard/stats")
       setStats({
         streak: data.streak || 0,
         tasksCompleted: data.tasksCompleted || 0,
@@ -161,7 +161,7 @@ export default function DashboardPage() {
               tasks.map((task) => (
                 <div
                   key={task.id}
-                  className="flex items-center gap-3 p-3 bg-white/10 rounded-lg"
+                  className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg border border-gray-700"
                 >
                   <input
                     type="checkbox"
@@ -201,7 +201,7 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={exam.id}
-                    className="p-4 bg-white/10 rounded-lg"
+                    className="p-4 bg-gray-800 rounded-lg border border-gray-700"
                   >
                     <p className="font-semibold text-white">{exam.title}</p>
                     <p className="text-sm text-white/70">

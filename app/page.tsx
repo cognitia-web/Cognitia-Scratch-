@@ -57,7 +57,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 mb-8"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-800 border border-gray-700 mb-8"
           >
             <Sparkles className="w-4 h-4 text-softBlue" />
             <span className="text-sm text-white/80">AI-Powered Study Companion</span>
@@ -92,7 +92,7 @@ export default function LandingPage() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <GlassButton size="lg" asChild>
-              <Link href="/auth/signup">
+              <Link href="/auth/signup" className="flex items-center">
                 Start Free Trial
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
@@ -132,7 +132,7 @@ export default function LandingPage() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <div className="p-6 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl hover:bg-white/10 transition-all duration-300 h-full">
+                <div className="p-6 bg-gray-800 border border-gray-700 rounded-2xl hover:bg-gray-750 transition-all duration-300 h-full">
                   <div className="p-3 bg-gradient-to-br from-softBlue/20 to-calmPurple/20 rounded-xl w-fit mb-4">
                     <feature.icon className="w-6 h-6 text-softBlue" />
                   </div>
@@ -156,7 +156,7 @@ export default function LandingPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center p-12 bg-gradient-to-br from-softBlue/20 via-calmPurple/20 to-softBlue/20 backdrop-blur-xl border border-white/20 rounded-3xl"
+            className="text-center p-12 bg-gradient-to-br from-softBlue/20 via-calmPurple/20 to-softBlue/20 border border-gray-700 rounded-3xl"
           >
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Ready to Transform Your Study Habits?
@@ -165,8 +165,8 @@ export default function LandingPage() {
               Join thousands of students who are already achieving their goals
             </p>
             <GlassButton size="lg" asChild>
-              <Link href="/auth/signup">
-                Get Started Free
+              <Link href="/auth/signup" className="flex items-center">
+                Get Started for Free
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </GlassButton>
@@ -175,7 +175,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 px-6 md:px-12 py-12 border-t border-white/10">
+      <footer className="relative z-10 px-6 md:px-12 py-12 border-t border-gray-700">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between">
           <div className="text-white/70 mb-4 md:mb-0">
             © 2024 Cognitia. All rights reserved.

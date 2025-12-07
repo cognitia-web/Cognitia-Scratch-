@@ -44,8 +44,8 @@ export default function TasksPage() {
 
   const fetchTasks = async () => {
     try {
-      const res = await fetch("/api/tasks")
-      const data = await res.json()
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/tasks")
       setTasks(data)
     } catch (error) {
       console.error("Failed to fetch tasks:", error)
@@ -54,8 +54,8 @@ export default function TasksPage() {
 
   const fetchHabits = async () => {
     try {
-      const res = await fetch("/api/habits")
-      const data = await res.json()
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/habits")
       setHabits(data)
     } catch (error) {
       console.error("Failed to fetch habits:", error)
@@ -69,34 +69,29 @@ export default function TasksPage() {
     }
 
     try {
-      const res = await fetch("/api/tasks", {
+      const { apiRequest } = await import("@/lib/api-client")
+      await apiRequest("/api/tasks", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
           dueDate: formData.dueDate || null,
         }),
       })
 
-      if (res.ok) {
-        await fetchTasks()
-        setShowTaskModal(false)
-        setFormData({
-          title: "",
-          description: "",
-          type: "STUDY",
-          priority: "MEDIUM",
-          dueDate: "",
-        })
-        // Trigger custom event to update dashboard
-        window.dispatchEvent(new Event('taskUpdated'))
-      } else {
-        const errorData = await res.json()
-        alert(errorData.error || "Failed to create task")
-      }
-    } catch (error) {
+      await fetchTasks()
+      setShowTaskModal(false)
+      setFormData({
+        title: "",
+        description: "",
+        type: "STUDY",
+        priority: "MEDIUM",
+        dueDate: "",
+      })
+      // Trigger custom event to update dashboard
+      window.dispatchEvent(new Event('taskUpdated'))
+    } catch (error: any) {
       console.error("Failed to create task:", error)
-      alert("Failed to create task. Please try again.")
+      alert(error.message || "Failed to create task. Please try again.")
     }
   }
 
@@ -104,24 +99,22 @@ export default function TasksPage() {
     if (!editingTask) return
 
     try {
-      const res = await fetch(`/api/tasks/${editingTask.id}`, {
+      const { apiRequest } = await import("@/lib/api-client")
+      await apiRequest(`/api/tasks/${editingTask.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       })
 
-      if (res.ok) {
-        fetchTasks()
-        setShowTaskModal(false)
-        setEditingTask(null)
-        setFormData({
-          title: "",
-          description: "",
-          type: "STUDY",
-          priority: "MEDIUM",
-          dueDate: "",
-        })
-      }
+      fetchTasks()
+      setShowTaskModal(false)
+      setEditingTask(null)
+      setFormData({
+        title: "",
+        description: "",
+        type: "STUDY",
+        priority: "MEDIUM",
+        dueDate: "",
+      })
     } catch (error) {
       console.error("Failed to update task:", error)
     }
@@ -131,13 +124,12 @@ export default function TasksPage() {
     if (!confirm("Are you sure you want to delete this task?")) return
 
     try {
-      const res = await fetch(`/api/tasks/${id}`, {
+      const { apiRequest } = await import("@/lib/api-client")
+      await apiRequest(`/api/tasks/${id}`, {
         method: "DELETE",
       })
 
-      if (res.ok) {
-        fetchTasks()
-      }
+      fetchTasks()
     } catch (error) {
       console.error("Failed to delete task:", error)
     }
@@ -147,16 +139,14 @@ export default function TasksPage() {
     const newStatus =
       task.status === "COMPLETED" ? "PENDING" : "COMPLETED"
     try {
-      const res = await fetch(`/api/tasks/${task.id}`, {
+      const { apiRequest } = await import("@/lib/api-client")
+      await apiRequest(`/api/tasks/${task.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       })
-      if (res.ok) {
-        await fetchTasks()
-        // Trigger custom event to update dashboard
-        window.dispatchEvent(new Event('taskUpdated'))
-      }
+      await fetchTasks()
+      // Trigger custom event to update dashboard
+      window.dispatchEvent(new Event('taskUpdated'))
     } catch (error) {
       console.error("Failed to update task:", error)
       alert("Failed to update task. Please try again.")
@@ -436,24 +426,19 @@ export default function TasksPage() {
                 }
 
                 try {
-                  const res = await fetch("/api/habits", {
+                  const { apiRequest } = await import("@/lib/api-client")
+                  await apiRequest("/api/habits", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(habitForm),
                   })
-                  if (res.ok) {
-                    await fetchHabits()
-                    setShowHabitModal(false)
-                    setHabitForm({ name: "", description: "" })
-                    // Trigger custom event to update dashboard
-                    window.dispatchEvent(new Event('taskUpdated'))
-                  } else {
-                    const errorData = await res.json()
-                    alert(errorData.error || "Failed to create habit")
-                  }
-                } catch (error) {
+                  await fetchHabits()
+                  setShowHabitModal(false)
+                  setHabitForm({ name: "", description: "" })
+                  // Trigger custom event to update dashboard
+                  window.dispatchEvent(new Event('taskUpdated'))
+                } catch (error: any) {
                   console.error("Failed to create habit:", error)
-                  alert("Failed to create habit. Please try again.")
+                  alert(error.message || "Failed to create habit. Please try again.")
                 }
               }}
             >

@@ -1,61 +1,60 @@
-import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth-config"
+import { NextRequest, NextResponse } from "next/server"
+import { getCurrentUser } from "@/lib/auth"
 import { prisma } from "@/lib/db/client"
 
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
+    const user = await getCurrentUser(request)
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     // Delete all user data (GDPR compliance)
     await prisma.task.deleteMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
 
     await prisma.habit.deleteMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
 
     await prisma.studySession.deleteMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
 
     await prisma.workout.deleteMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
 
     await prisma.courseProgress.deleteMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
 
     await prisma.exam.deleteMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
 
     await prisma.flashcard.deleteMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
 
     await prisma.reward.deleteMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
 
     await prisma.dailyReport.deleteMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
     })
 
     // Mark videos as deleted (files will be cleaned up by cron)
     await prisma.video.updateMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
       data: { deletedAt: new Date() },
     })
 
     // Delete user account
     await prisma.user.delete({
-      where: { id: session.user.id },
+      where: { id: user.id },
     })
 
     return NextResponse.json({ message: "All data deleted successfully" })

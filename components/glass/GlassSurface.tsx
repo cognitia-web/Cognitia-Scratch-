@@ -18,13 +18,9 @@ export default function GlassSurface({
   return (
     <div
       className={cn(
-        "backdrop-blur-xl border border-white/30 shadow-lg rounded-2xl",
+        "bg-gray-800 border border-gray-700 shadow-lg rounded-2xl",
         className
       )}
-      style={{
-        backgroundColor: `rgba(255, 255, 255, ${opacity})`,
-        backdropFilter: `blur(${blur}px)`,
-      }}
     >
       {children}
     </div>

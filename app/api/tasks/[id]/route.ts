@@ -1,15 +1,14 @@
-import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth-config"
+import { NextRequest, NextResponse } from "next/server"
+import { getCurrentUser } from "@/lib/auth"
 import { prisma } from "@/lib/db/client"
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
+    const user = await getCurrentUser(request)
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -20,7 +19,7 @@ export async function PATCH(
       where: { id: params.id },
     })
 
-    if (!task || task.userId !== session.user.id) {
+    if (!task || task.userId !== user.id) {
       return NextResponse.json({ error: "Not found" }, { status: 404 })
     }
 
@@ -44,12 +43,12 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
+    const user = await getCurrentUser(request)
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -58,7 +57,7 @@ export async function DELETE(
       where: { id: params.id },
     })
 
-    if (!task || task.userId !== session.user.id) {
+    if (!task || task.userId !== user.id) {
       return NextResponse.json({ error: "Not found" }, { status: 404 })
     }
 

@@ -49,8 +49,8 @@ export default function WorkoutPage() {
 
   const fetchWorkouts = async () => {
     try {
-      const res = await fetch("/api/workouts")
-      const data = await res.json()
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/workouts")
       setWorkouts(data)
     } catch (error) {
       console.error("Failed to fetch workouts:", error)
@@ -59,8 +59,8 @@ export default function WorkoutPage() {
 
   const fetchFoodLogs = async () => {
     try {
-      const res = await fetch("/api/food")
-      const data = await res.json()
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/food")
       setFoodLogs(data)
     } catch (error) {
       console.error("Failed to fetch food logs:", error)
@@ -75,16 +75,22 @@ export default function WorkoutPage() {
     formData.append("type", "WORKOUT")
 
     try {
+      const { getAuthToken } = await import("@/lib/api-client")
+      const token = await getAuthToken()
+      
       const res = await fetch("/api/verification", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       })
 
       if (res.ok) {
         // Create workout record
-        await fetch("/api/workouts", {
+        const { apiRequest } = await import("@/lib/api-client")
+        await apiRequest("/api/workouts", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             type: "General Workout",
             duration: 20,
@@ -355,9 +361,9 @@ export default function WorkoutPage() {
               className="flex-1"
               onClick={async () => {
                 try {
-                  const res = await fetch("/api/food", {
+                  const { apiRequest } = await import("@/lib/api-client")
+                  await apiRequest("/api/food", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                       name: foodForm.name,
                       calories: parseInt(foodForm.calories) || 0,
@@ -366,14 +372,9 @@ export default function WorkoutPage() {
                       fats: foodForm.fats ? parseFloat(foodForm.fats) : undefined,
                     }),
                   })
-                  if (res.ok) {
-                    await fetchFoodLogs()
-                    setShowFoodModal(false)
-                    setFoodForm({ name: "", calories: "", protein: "", carbs: "", fats: "" })
-                  } else {
-                    const errorData = await res.json()
-                    alert(errorData.error || "Failed to add food")
-                  }
+                  await fetchFoodLogs()
+                  setShowFoodModal(false)
+                  setFoodForm({ name: "", calories: "", protein: "", carbs: "", fats: "" })
                 } catch (error) {
                   console.error("Failed to add food:", error)
                 }

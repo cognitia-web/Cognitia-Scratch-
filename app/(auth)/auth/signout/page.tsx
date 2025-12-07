@@ -82,7 +82,7 @@ export default function SignOutPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <GlassCard className="backdrop-blur-2xl bg-white/10 border-white/20 text-center p-12">
+          <GlassCard className="text-center p-12">
             <motion.div
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}

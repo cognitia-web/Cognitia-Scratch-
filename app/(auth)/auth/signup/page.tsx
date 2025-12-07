@@ -7,6 +7,7 @@ import AuroraBackground from "@/components/backgrounds/AuroraBackground"
 import GlassCard from "@/components/glass/GlassCard"
 import GlassButton from "@/components/glass/GlassButton"
 import { Input } from "@/components/ui/input"
+import { NumberInput } from "@/components/ui/number-input"
 import GlassModal from "@/components/glass/GlassModal"
 import { Sparkles, Mail, Lock, User, Calendar } from "lucide-react"
 
@@ -43,26 +44,17 @@ export default function SignUpPage() {
     setLoading(true)
 
     try {
-      const response = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          age: parseInt(formData.age),
-          guardianEmail: age < 16 ? guardianEmail : undefined,
-        }),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        setError(data.error || "Something went wrong")
-        return
-      }
-
-      router.push("/auth/signin")
-    } catch (err) {
-      setError("Something went wrong")
+      const { signUp } = await import("@/lib/firebase/auth")
+      await signUp(
+        formData.email,
+        formData.password,
+        formData.name,
+        parseInt(formData.age),
+        age < 16 ? guardianEmail : undefined
+      )
+      router.push("/dashboard")
+    } catch (err: any) {
+      setError(err.message || "Something went wrong")
     } finally {
       setLoading(false)
     }
@@ -72,7 +64,7 @@ export default function SignUpPage() {
     <div className="relative min-h-screen flex items-center justify-center p-4">
       <AuroraBackground />
       <div className="relative z-10 w-full max-w-md">
-        <GlassCard className="backdrop-blur-2xl bg-white/10 border-white/20">
+        <GlassCard>
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-softBlue/20 to-calmPurple/20 mb-4">
               <Sparkles className="w-8 h-8 text-softBlue" />
@@ -97,7 +89,7 @@ export default function SignUpPage() {
                   setFormData({ ...formData, name: e.target.value })
                 }
                 required
-                className="w-full bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-softBlue/50"
+                className="w-full"
                 placeholder="Your name"
               />
             </div>
@@ -113,7 +105,7 @@ export default function SignUpPage() {
                   setFormData({ ...formData, email: e.target.value })
                 }
                 required
-                className="w-full bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-softBlue/50"
+                className="w-full"
                 placeholder="your@email.com"
               />
             </div>
@@ -122,15 +114,22 @@ export default function SignUpPage() {
                 <Calendar className="w-4 h-4" />
                 Age
               </label>
-              <Input
-                type="number"
+              <NumberInput
                 min="13"
                 value={formData.age}
                 onChange={(e) =>
                   setFormData({ ...formData, age: e.target.value })
                 }
+                onIncrement={() => {
+                  const currentAge = parseInt(formData.age) || 13
+                  setFormData({ ...formData, age: Math.min(currentAge + 1, 100).toString() })
+                }}
+                onDecrement={() => {
+                  const currentAge = parseInt(formData.age) || 13
+                  setFormData({ ...formData, age: Math.max(currentAge - 1, 13).toString() })
+                }}
                 required
-                className="w-full bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-softBlue/50"
+                className="w-full"
                 placeholder="16"
               />
               {age < 16 && age >= 13 && (
@@ -152,7 +151,7 @@ export default function SignUpPage() {
                 }
                 required
                 minLength={8}
-                className="w-full bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-softBlue/50"
+                className="w-full"
                 placeholder="••••••••"
               />
             </div>

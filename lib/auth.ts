@@ -1,24 +1,27 @@
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { NextRequest } from "next/server"
+import { getServerUser } from "@/lib/firebase/server-auth"
 
-export async function getCurrentUser() {
-  const session = await getServerSession(authOptions)
-  return session?.user
+export async function getCurrentUser(request: NextRequest) {
+  try {
+    const token = request.headers.get("authorization")?.replace("Bearer ", "")
+    
+    if (!token) {
+      return null
+    }
+
+    return await getServerUser(token)
+  } catch (error) {
+    console.error("Error getting current user:", error)
+    return null
+  }
 }
 
-export async function requireAuth() {
-  const user = await getCurrentUser()
+export async function requireAuth(request: NextRequest) {
+  const user = await getCurrentUser(request)
+  
   if (!user) {
     throw new Error("Unauthorized")
   }
+  
   return user
 }
-
-export async function requireRole(role: string) {
-  const user = await requireAuth()
-  if (user.role !== role) {
-    throw new Error("Forbidden")
-  }
-  return user
-}
-

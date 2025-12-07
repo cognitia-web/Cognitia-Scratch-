@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { signIn } from "next-auth/react"
+import { signIn } from "@/lib/firebase/auth"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import AuroraBackground from "@/components/backgrounds/AuroraBackground"
@@ -23,19 +23,10 @@ export default function SignInPage() {
     setError("")
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      })
-
-      if (result?.error) {
-        setError("Invalid credentials")
-      } else {
-        router.push("/dashboard")
-      }
-    } catch (err) {
-      setError("Something went wrong")
+      await signIn(email, password)
+      router.push("/dashboard")
+    } catch (err: any) {
+      setError(err.message || "Invalid credentials")
     } finally {
       setLoading(false)
     }
@@ -45,7 +36,7 @@ export default function SignInPage() {
     <div className="relative min-h-screen flex items-center justify-center p-4">
       <AuroraBackground />
       <div className="relative z-10 w-full max-w-md">
-        <GlassCard className="backdrop-blur-2xl bg-white/10 border-white/20">
+        <GlassCard>
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-softBlue/20 to-calmPurple/20 mb-4">
               <Sparkles className="w-8 h-8 text-softBlue" />
@@ -69,7 +60,7 @@ export default function SignInPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-softBlue/50"
+                className="w-full"
                 placeholder="your@email.com"
               />
             </div>
@@ -83,7 +74,7 @@ export default function SignInPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full bg-white/5 border-white/20 text-white placeholder:text-white/40 focus:border-softBlue/50"
+                className="w-full"
                 placeholder="••••••••"
               />
             </div>

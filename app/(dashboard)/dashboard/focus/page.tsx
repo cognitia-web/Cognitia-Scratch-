@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import GlassCard from "@/components/glass/GlassCard"
 import GlassButton from "@/components/glass/GlassButton"
 import { Play, Pause, RotateCcw, Volume2, VolumeX } from "lucide-react"
@@ -27,13 +27,39 @@ export default function FocusPage() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
+  const handleTimerComplete = useCallback(() => {
+    setIsRunning(false)
+    if (mode === "pomodoro") {
+      setSessions((prev) => {
+        const newSessions = prev + 1
+        // Auto-start short break after 4 sessions, otherwise long break
+        if (newSessions >= 4) {
+          setMode("longBreak")
+          setTime(LONG_BREAK)
+          return 0
+        } else {
+          setMode("shortBreak")
+          setTime(SHORT_BREAK)
+          return newSessions
+        }
+      })
+    } else {
+      setMode("pomodoro")
+      setTime(POMODORO_DURATION)
+    }
+  }, [mode])
+
   useEffect(() => {
     if (isRunning && time > 0) {
       intervalRef.current = setInterval(() => {
-        setTime((prev) => prev - 1)
+        setTime((prev) => {
+          if (prev <= 1) {
+            handleTimerComplete()
+            return 0
+          }
+          return prev - 1
+        })
       }, 1000)
-    } else if (time === 0) {
-      handleTimerComplete()
     }
 
     return () => {
@@ -41,26 +67,7 @@ export default function FocusPage() {
         clearInterval(intervalRef.current)
       }
     }
-  }, [isRunning, time])
-
-  const handleTimerComplete = () => {
-    setIsRunning(false)
-    if (mode === "pomodoro") {
-      setSessions((prev) => prev + 1)
-      // Auto-start short break after 4 sessions, otherwise long break
-      if (sessions + 1 >= 4) {
-        setMode("longBreak")
-        setTime(LONG_BREAK)
-        setSessions(0)
-      } else {
-        setMode("shortBreak")
-        setTime(SHORT_BREAK)
-      }
-    } else {
-      setMode("pomodoro")
-      setTime(POMODORO_DURATION)
-    }
-  }
+  }, [isRunning, time, handleTimerComplete])
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -169,7 +176,7 @@ export default function FocusPage() {
               </GlassButton>
             </div>
 
-            <div className="mt-8 p-4 bg-white/5 rounded-xl border border-white/10">
+            <div className="mt-8 p-4 bg-gray-800 rounded-xl border border-gray-700">
               <p className="text-sm text-white/70 mb-2">Sessions Completed Today</p>
               <p className="text-3xl font-bold text-white">{sessions}</p>
             </div>
@@ -183,7 +190,7 @@ export default function FocusPage() {
               <span className="text-white">White Noise</span>
               <button
                 onClick={toggleSound}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
               >
                 {soundEnabled ? (
                   <Volume2 className="w-5 h-5 text-white" />
@@ -204,8 +211,8 @@ export default function FocusPage() {
                 }}
                 className={`w-full p-3 rounded-xl transition-colors text-left border ${
                   selectedSound.name === sound.name
-                    ? "bg-gradient-to-r from-softBlue/20 to-calmPurple/20 text-white border-white/30"
-                    : "bg-white/5 text-white/70 hover:bg-white/10 border-white/10"
+                    ? "bg-gradient-to-r from-softBlue/20 to-calmPurple/20 text-white border-gray-600"
+                    : "bg-gray-800 text-white/70 hover:bg-gray-750 border-gray-700"
                 }`}
               >
                 {sound.name}
@@ -221,7 +228,7 @@ export default function FocusPage() {
             )}
           </div>
 
-          <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/10">
+          <div className="mt-6 p-4 bg-gray-800 rounded-xl border border-gray-700">
             <h3 className="font-semibold text-white mb-2">Focus Tips</h3>
             <ul className="text-sm text-white/70 space-y-1">
               <li>• Remove distractions</li>

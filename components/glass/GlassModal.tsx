@@ -40,7 +40,7 @@ export default function GlassModal({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-black/50"
           />
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
@@ -49,9 +49,8 @@ export default function GlassModal({
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", duration: 0.3 }}
               className={cn(
-                "backdrop-blur-2xl",
-                "bg-white/10",
-                "border border-white/20",
+                "bg-gray-800",
+                "border border-gray-700",
                 "shadow-2xl",
                 "rounded-3xl",
                 "p-6",
@@ -66,7 +65,7 @@ export default function GlassModal({
                   <h2 className="text-2xl font-bold text-white">{title}</h2>
                   <button
                     onClick={onClose}
-                    className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                    className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
                   >
                     <X className="w-5 h-5 text-white/70 hover:text-white" />
                   </button>

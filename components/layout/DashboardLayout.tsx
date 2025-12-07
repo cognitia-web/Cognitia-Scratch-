@@ -1,6 +1,6 @@
 "use client"
 
-import { signOut } from "next-auth/react"
+import { signOut } from "@/lib/firebase/auth"
 import { useRouter } from "next/navigation"
 import AuroraBackground from "@/components/backgrounds/AuroraBackground"
 import Dock from "@/components/navigation/Dock"
@@ -13,7 +13,7 @@ export default function DashboardLayout({
   const router = useRouter()
 
   const handleSignOut = async () => {
-    await signOut({ redirect: false })
+    await signOut()
     router.push("/auth/signout")
   }
 

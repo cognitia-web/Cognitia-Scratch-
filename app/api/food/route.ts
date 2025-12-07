@@ -1,6 +1,5 @@
-import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth-config"
+import { NextRequest, NextResponse } from "next/server"
+import { getCurrentUser } from "@/lib/auth"
 import { prisma } from "@/lib/db/client"
 
 // Indian food database (simplified - in production, use a comprehensive database)
@@ -15,15 +14,15 @@ const INDIAN_FOODS: Record<string, { calories: number; protein: number; carbs: n
   "paneer": { calories: 100, protein: 7, carbs: 2, fats: 7 },
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
+    const user = await getCurrentUser(request)
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const foodLogs = await prisma.foodLog.findMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
       orderBy: { date: "desc" },
       take: 100,
     })
@@ -38,10 +37,10 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
+    const user = await getCurrentUser(request)
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -60,7 +59,7 @@ export async function POST(request: Request) {
 
     const foodLog = await prisma.foodLog.create({
       data: {
-        userId: session.user.id,
+        userId: user.id,
         name,
         calories: parseInt(calories),
         protein: protein ? parseFloat(protein) : null,

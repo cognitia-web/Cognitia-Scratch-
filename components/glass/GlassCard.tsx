@@ -21,14 +21,13 @@ export default function GlassCard({
       transition={{ duration: 0.2, ease: "easeOut" }}
       viewport={{ once: true, margin: "-50px" }}
       className={cn(
-        "backdrop-blur-xl",
-        "bg-white/10",
-        "border border-white/20",
+        "bg-gray-800",
+        "border border-gray-700",
         "shadow-lg",
         "rounded-2xl",
         "p-6",
         "will-change-transform",
-        hover && "transition duration-300 hover:bg-white/20 hover:shadow-xl",
+        hover && "transition duration-300 hover:bg-gray-750 hover:shadow-xl",
         onClick && "cursor-pointer",
         className
       )}

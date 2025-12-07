@@ -1,17 +1,16 @@
-import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth-config"
+import { NextRequest, NextResponse } from "next/server"
+import { getCurrentUser } from "@/lib/auth"
 import { prisma } from "@/lib/db/client"
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
+    const user = await getCurrentUser(request)
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const tasks = await prisma.task.findMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
       orderBy: { order: "asc" },
     })
 
@@ -25,10 +24,10 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
+    const user = await getCurrentUser(request)
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -37,13 +36,13 @@ export async function POST(request: Request) {
 
     // Get max order for this user
     const maxOrderTask = await prisma.task.findFirst({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
       orderBy: { order: "desc" },
     })
 
     const task = await prisma.task.create({
       data: {
-        userId: session.user.id,
+        userId: user.id,
         title,
         description,
         type,

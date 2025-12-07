@@ -1,20 +1,19 @@
-import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth-config"
+import { NextRequest, NextResponse } from "next/server"
+import { getCurrentUser } from "@/lib/auth"
 import { prisma } from "@/lib/db/client"
 
 const POINTS_PER_VERIFIED_TASK = 10
 const KYC_THRESHOLD = 100 // USD
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
+    const user = await getCurrentUser(request)
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const rewards = await prisma.reward.findMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
       orderBy: { createdAt: "desc" },
     })
 
@@ -36,10 +35,10 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
+    const user = await getCurrentUser(request)
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -50,7 +49,7 @@ export async function POST(request: Request) {
     if (type === "POINTS") {
       const reward = await prisma.reward.create({
         data: {
-          userId: session.user.id,
+          userId: user.id,
           points: points || POINTS_PER_VERIFIED_TASK,
           type: "POINTS",
           status: "COMPLETED",
@@ -70,7 +69,7 @@ export async function POST(request: Request) {
 
       const reward = await prisma.reward.create({
         data: {
-          userId: session.user.id,
+          userId: user.id,
           points: pointsToConvert,
           type: "USD",
           amount: usdAmount,

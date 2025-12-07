@@ -44,8 +44,8 @@ export default function Dock() {
                   w-12 h-12 rounded-xl
                   transition-all duration-200
                   ${isActive 
-                    ? "bg-white/30 scale-110" 
-                    : "hover:bg-white/20 hover:scale-105"
+                    ? "bg-gray-700 scale-110" 
+                    : "hover:bg-gray-700 hover:scale-105"
                   }
                 `}
               >
@@ -53,7 +53,7 @@ export default function Dock() {
                 {isActive && (
                   <motion.div
                     layoutId="activeTab"
-                    className="absolute inset-0 bg-white/30 rounded-xl -z-10"
+                    className="absolute inset-0 bg-gray-700 rounded-xl -z-10"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                   />
                 )}

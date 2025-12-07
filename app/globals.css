@@ -41,18 +41,46 @@
 
 @layer utilities {
   .glass {
-    @apply backdrop-blur-xl bg-white/20 border border-white/30 shadow-lg rounded-2xl;
+    @apply bg-gray-800 border border-gray-700 shadow-lg rounded-2xl;
     will-change: transform, opacity;
     transform: translateZ(0); /* Force GPU acceleration */
   }
   
   .glass-hover {
-    @apply transition duration-300 hover:bg-white/30;
+    @apply transition duration-300 hover:bg-gray-750;
   }
   
   .glass-card {
     @apply glass glass-hover p-6;
   }
+}
+
+/* Autofill suggestions */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px rgb(31, 41, 55) inset !important;
+  -webkit-text-fill-color: white !important;
+}
+
+/* Datalist/autocomplete */
+datalist option {
+  background: rgb(31, 41, 55);
+  border: 1px solid rgb(55, 65, 81);
+  color: white;
+  padding: 8px;
+}
+
+/* Hide default number input arrows */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 /* Optimize scroll performance */

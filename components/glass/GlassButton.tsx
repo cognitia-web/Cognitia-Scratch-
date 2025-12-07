@@ -13,9 +13,9 @@ const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
     const variants = {
       primary: "bg-gradient-to-r from-softBlue to-softBlue/80 text-white hover:from-softBlue/90 hover:to-softBlue/70 shadow-lg shadow-softBlue/20",
       secondary: "bg-gradient-to-r from-calmPurple to-calmPurple/80 text-white hover:from-calmPurple/90 hover:to-calmPurple/70 shadow-lg shadow-calmPurple/20",
-      ghost: "bg-white/10 text-white hover:bg-white/20 border-white/20",
+      ghost: "bg-gray-700 text-white hover:bg-gray-600 border-gray-600",
       gradient: "bg-gradient-to-r from-softBlue via-calmPurple to-softBlue text-white hover:shadow-lg hover:shadow-softBlue/30",
-      destructive: "bg-red-500/80 text-white hover:bg-red-500 shadow-lg shadow-red-500/20",
+      destructive: "bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20",
     }
 
     const sizes = {
@@ -25,8 +25,7 @@ const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
     }
 
     const baseClasses = cn(
-      "backdrop-blur-md",
-      "border border-white/30",
+      "border border-gray-600",
       "rounded-xl",
       "font-medium",
       "transition-all duration-300",

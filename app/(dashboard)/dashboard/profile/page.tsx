@@ -1,8 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useAuth } from "@/components/providers/AuthProvider"
 import GlassCard from "@/components/glass/GlassCard"
 import GlassButton from "@/components/glass/GlassButton"
+import ProfileCard from "@/components/profile/ProfileCard"
 import { Trophy, Download, Trash2, Shield } from "lucide-react"
 import { motion } from "framer-motion"
 import { Input } from "@/components/ui/input"
@@ -17,18 +19,39 @@ interface Reward {
 }
 
 export default function ProfilePage() {
+  const { user } = useAuth()
   const [rewards, setRewards] = useState<Reward[]>([])
   const [totalPoints, setTotalPoints] = useState(0)
   const [pointsToConvert, setPointsToConvert] = useState("")
+  const [userStats, setUserStats] = useState({
+    experience: 0,
+    stage: "Beginner",
+    balance: 0,
+  })
 
   useEffect(() => {
     fetchRewards()
+    fetchUserStats()
   }, [])
+
+  const fetchUserStats = async () => {
+    try {
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/dashboard/stats")
+      setUserStats({
+        experience: data.points || 0,
+        stage: data.points >= 10000 ? "Expert" : data.points >= 5000 ? "Advanced" : data.points >= 1000 ? "Intermediate" : "Beginner",
+        balance: data.points || 0,
+      })
+    } catch (error) {
+      console.error("Failed to fetch user stats:", error)
+    }
+  }
 
   const fetchRewards = async () => {
     try {
-      const res = await fetch("/api/rewards")
-      const data = await res.json()
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/rewards")
       setRewards(data.rewards || [])
       setTotalPoints(data.totalPoints || 0)
     } catch (error) {
@@ -44,17 +67,15 @@ export default function ProfilePage() {
     }
 
     try {
-      const res = await fetch("/api/rewards/convert", {
+      const { apiRequest } = await import("@/lib/api-client")
+      await apiRequest("/api/rewards/convert", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ points }),
       })
 
-      if (res.ok) {
-        fetchRewards()
-        setPointsToConvert("")
-        alert("Points conversion initiated!")
-      }
+      fetchRewards()
+      setPointsToConvert("")
+      alert("Points conversion initiated!")
     } catch (error) {
       console.error("Failed to convert points:", error)
     }
@@ -62,8 +83,8 @@ export default function ProfilePage() {
 
   const handleExportData = async () => {
     try {
-      const res = await fetch("/api/data/export")
-      const blob = await res.blob()
+      const { apiRequest } = await import("@/lib/api-client")
+      const blob = await apiRequest("/api/data/export") as Blob
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement("a")
       a.href = url
@@ -80,14 +101,13 @@ export default function ProfilePage() {
     }
 
     try {
-      const res = await fetch("/api/data/delete", {
+      const { apiRequest } = await import("@/lib/api-client")
+      await apiRequest("/api/data/delete", {
         method: "DELETE",
       })
 
-      if (res.ok) {
-        alert("All data deleted successfully")
-        window.location.href = "/auth/signin"
-      }
+      alert("All data deleted successfully")
+      window.location.href = "/auth/signin"
     } catch (error) {
       console.error("Failed to delete data:", error)
     }
@@ -99,6 +119,17 @@ export default function ProfilePage() {
         <h1 className="text-4xl font-bold text-white mb-2">Profile & Settings</h1>
         <p className="text-white/70">Manage your account, rewards, and privacy</p>
       </div>
+
+      {/* Profile Card */}
+      {user && (
+        <ProfileCard
+          name={user.displayName || "User"}
+          email={user.email || ""}
+          experience={userStats.experience}
+          stage={userStats.stage}
+          balance={userStats.balance}
+        />
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <GlassCard>
@@ -140,7 +171,7 @@ export default function ProfilePage() {
             {rewards.slice(0, 5).map((reward) => (
               <div
                 key={reward.id}
-                className="p-3 bg-white/5 rounded-xl flex items-center justify-between border border-white/10"
+                className="p-3 bg-gray-800 rounded-xl flex items-center justify-between border border-gray-700"
               >
                 <div>
                   <p className="text-sm font-medium text-white">
@@ -156,7 +187,7 @@ export default function ProfilePage() {
                       ? "bg-green-500/20 text-green-400 border border-green-500/30"
                       : reward.status === "PROCESSING"
                       ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
-                      : "bg-white/10 text-white/60 border border-white/10"
+                      : "bg-gray-800 text-white/60 border border-gray-700"
                   }`}
                 >
                   {reward.status}
@@ -196,7 +227,7 @@ export default function ProfilePage() {
             </GlassButton>
           </div>
 
-          <div className="mt-6 p-4 bg-white/5 rounded-xl border border-white/10">
+          <div className="mt-6 p-4 bg-gray-800 rounded-xl border border-gray-700">
             <h3 className="font-semibold text-white mb-2">Privacy Information</h3>
             <ul className="text-sm text-white/70 space-y-1">
               <li>• All videos are encrypted and auto-delete after 30 days</li>

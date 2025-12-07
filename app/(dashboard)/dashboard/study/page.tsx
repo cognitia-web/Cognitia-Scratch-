@@ -46,8 +46,8 @@ export default function StudyPage() {
 
   const fetchExams = async () => {
     try {
-      const res = await fetch("/api/exams")
-      const data = await res.json()
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/exams")
       // Map the data to match our interface
       setExams(data.map((exam: any) => ({
         id: exam.id,
@@ -62,8 +62,8 @@ export default function StudyPage() {
 
   const fetchFlashcards = async () => {
     try {
-      const res = await fetch("/api/flashcards")
-      const data = await res.json()
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/flashcards")
       setFlashcards(data)
     } catch (error) {
       console.error("Failed to fetch flashcards:", error)
@@ -86,13 +86,11 @@ export default function StudyPage() {
     setLoading(true)
 
     try {
-      const res = await fetch("/api/study/chat", {
+      const { apiRequest } = await import("@/lib/api-client")
+      const data = await apiRequest("/api/study/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: messageContent }),
       })
-
-      const data = await res.json()
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -165,7 +163,7 @@ export default function StudyPage() {
                         className={`max-w-[80%] p-4 rounded-2xl ${
                           message.role === "user"
                             ? "bg-gradient-to-r from-softBlue to-softBlue/80 text-white shadow-lg shadow-softBlue/20"
-                            : "bg-white/10 text-white border border-white/20"
+                            : "bg-gray-800 text-white border border-gray-700"
                         }`}
                       >
                         <p>{message.content}</p>
@@ -175,7 +173,7 @@ export default function StudyPage() {
                 </AnimatePresence>
                 {loading && (
                   <div className="flex justify-start">
-                    <div className="bg-white/10 p-4 rounded-2xl border border-white/20">
+                    <div className="bg-gray-800 p-4 rounded-2xl border border-gray-700">
                       <div className="flex gap-2">
                         <div className="w-2 h-2 bg-softBlue rounded-full animate-bounce" />
                         <div className="w-2 h-2 bg-softBlue rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
@@ -186,7 +184,7 @@ export default function StudyPage() {
                 )}
                 <div ref={messagesEndRef} />
               </div>
-              <div className="p-4 border-t border-white/30">
+              <div className="p-4 border-t border-gray-700">
                 <div className="flex gap-2">
                   <Input
                     value={input}
@@ -220,12 +218,11 @@ export default function StudyPage() {
                   setMessages((prev) => [...prev, userMessage])
                   setLoading(true)
                   try {
-                    const res = await fetch("/api/study/chat", {
+                    const { apiRequest } = await import("@/lib/api-client")
+                    const data = await apiRequest("/api/study/chat", {
                       method: "POST",
-                      headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({ message }),
                     })
-                    const data = await res.json()
                     const assistantMessage: Message = {
                       id: (Date.now() + 1).toString(),
                       role: "assistant",
@@ -263,12 +260,11 @@ export default function StudyPage() {
                   setMessages((prev) => [...prev, userMessage])
                   setLoading(true)
                   try {
-                    const res = await fetch("/api/study/chat", {
+                    const { apiRequest } = await import("@/lib/api-client")
+                    const data = await apiRequest("/api/study/chat", {
                       method: "POST",
-                      headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({ message }),
                     })
-                    const data = await res.json()
                     const assistantMessage: Message = {
                       id: (Date.now() + 1).toString(),
                       role: "assistant",
@@ -306,12 +302,11 @@ export default function StudyPage() {
                   setMessages((prev) => [...prev, userMessage])
                   setLoading(true)
                   try {
-                    const res = await fetch("/api/study/chat", {
+                    const { apiRequest } = await import("@/lib/api-client")
+                    const data = await apiRequest("/api/study/chat", {
                       method: "POST",
-                      headers: { "Content-Type": "application/json" },
                       body: JSON.stringify({ message }),
                     })
-                    const data = await res.json()
                     const assistantMessage: Message = {
                       id: (Date.now() + 1).toString(),
                       role: "assistant",
@@ -458,9 +453,9 @@ export default function StudyPage() {
               className="flex-1"
               onClick={async () => {
                 try {
-                  const res = await fetch("/api/exams", {
+                  const { apiRequest } = await import("@/lib/api-client")
+                  await apiRequest("/api/exams", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                       title: examForm.title,
                       subject: examForm.subject || "General",
@@ -468,16 +463,11 @@ export default function StudyPage() {
                       notes: examForm.subject || null,
                     }),
                   })
-                  if (res.ok) {
-                    await fetchExams()
-                    setShowExamModal(false)
-                    setExamForm({ title: "", subject: "", date: "" })
-                    // Trigger custom event to update dashboard
-                    window.dispatchEvent(new Event('taskUpdated'))
-                  } else {
-                    const errorData = await res.json()
-                    alert(errorData.error || "Failed to create exam")
-                  }
+                  await fetchExams()
+                  setShowExamModal(false)
+                  setExamForm({ title: "", subject: "", date: "" })
+                  // Trigger custom event to update dashboard
+                  window.dispatchEvent(new Event('taskUpdated'))
                 } catch (error) {
                   console.error("Failed to create exam:", error)
                 }
@@ -539,22 +529,17 @@ export default function StudyPage() {
                     return
                   }
 
-                  const res = await fetch("/api/flashcards", {
+                  const { apiRequest } = await import("@/lib/api-client")
+                  await apiRequest("/api/flashcards", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                       question: flashcardForm.question,
                       answer: flashcardForm.answer,
                     }),
                   })
-                  if (res.ok) {
-                    await fetchFlashcards()
-                    setShowFlashcardModal(false)
-                    setFlashcardForm({ question: "", answer: "" })
-                  } else {
-                    const errorData = await res.json()
-                    alert(errorData.error || "Failed to create flashcard")
-                  }
+                  await fetchFlashcards()
+                  setShowFlashcardModal(false)
+                  setFlashcardForm({ question: "", answer: "" })
                 } catch (error) {
                   console.error("Failed to create flashcard:", error)
                 }
