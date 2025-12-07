@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 249 250 251; /* Frost White */
+    --foreground: 26 26 26; /* Charcoal */
+    --card: 255 255 255 / 0.25;
+    --card-foreground: 26 26 26;
+    --popover: 255 255 255 / 0.25;
+    --popover-foreground: 26 26 26;
+    --primary: 110 205 254; /* Soft Blue */
+    --primary-foreground: 26 26 26;
+    --secondary: 161 136 255; /* Calm Purple */
+    --secondary-foreground: 255 255 255;
+    --muted: 221 228 234; /* Ice Grey */
+    --muted-foreground: 113 113 122;
+    --accent: 110 205 254;
+    --accent-foreground: 26 26 26;
+    --destructive: 239 68 68;
+    --destructive-foreground: 255 255 255;
+    --border: 255 255 255 / 0.3;
+    --input: 255 255 255 / 0.3;
+    --ring: 110 205 254;
+    --radius: 16px;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply text-charcoal;
+    min-height: 100vh;
+    background: #0a0a0a; /* Dark base for aurora effect */
+    position: relative;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-xl bg-white/20 border border-white/30 shadow-lg rounded-2xl;
+    will-change: transform, opacity;
+    transform: translateZ(0); /* Force GPU acceleration */
+  }
+  
+  .glass-hover {
+    @apply transition duration-300 hover:bg-white/30;
+  }
+  
+  .glass-card {
+    @apply glass glass-hover p-6;
+  }
+}
+
+/* Optimize scroll performance */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
