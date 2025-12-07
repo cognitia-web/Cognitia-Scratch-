@@ -9,7 +9,9 @@ import GlassButton from "@/components/glass/GlassButton"
 import { Input } from "@/components/ui/input"
 import { NumberInput } from "@/components/ui/number-input"
 import GlassModal from "@/components/glass/GlassModal"
-import { Sparkles, Mail, Lock, User, Calendar } from "lucide-react"
+import { signInWithGoogle, signInWithGitHub, signInWithMicrosoft } from "@/lib/firebase/auth"
+import { Sparkles, Mail, Lock, User, Calendar, Github, Chrome, Building2 } from "lucide-react"
+import { motion } from "framer-motion"
 
 export default function SignUpPage() {
   const router = useRouter()
@@ -19,10 +21,10 @@ export default function SignUpPage() {
     password: "",
     age: "",
   })
-  const [showAgeModal, setShowAgeModal] = useState(false)
   const [showGuardianModal, setShowGuardianModal] = useState(false)
   const [guardianEmail, setGuardianEmail] = useState("")
   const [loading, setLoading] = useState(false)
+  const [oauthLoading, setOauthLoading] = useState<string | null>(null)
   const [error, setError] = useState("")
 
   const age = formData.age ? parseInt(formData.age) : 0
@@ -65,22 +67,33 @@ export default function SignUpPage() {
       <AuroraBackground />
       <div className="relative z-10 w-full max-w-md">
         <GlassCard>
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-softBlue/20 to-calmPurple/20 mb-4">
-              <Sparkles className="w-8 h-8 text-softBlue" />
-            </div>
-            <h1 className="text-4xl font-bold text-white mb-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-8 md:mb-10"
+          >
+            <motion.div
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-softBlue/20 to-calmPurple/20 mb-4 md:mb-6"
+            >
+              <Sparkles className="w-8 h-8 md:w-10 md:h-10 text-softBlue" />
+            </motion.div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-2 md:mb-4 bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent">
               Create Account
             </h1>
-            <p className="text-white/70">
+            <p className="text-base sm:text-lg text-white/60 font-medium">
               Start your learning journey today
             </p>
-          </div>
+          </motion.div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-white/90 mb-2 flex items-center gap-2">
-                <User className="w-4 h-4" />
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <label className="block text-sm md:text-base font-semibold text-white/90 mb-2 md:mb-3 flex items-center gap-2">
+                <User className="w-4 h-4 md:w-5 md:h-5 text-softBlue" />
                 Name
               </label>
               <Input
@@ -89,13 +102,17 @@ export default function SignUpPage() {
                   setFormData({ ...formData, name: e.target.value })
                 }
                 required
-                className="w-full"
+                className="w-full text-base"
                 placeholder="Your name"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-white/90 mb-2 flex items-center gap-2">
-                <Mail className="w-4 h-4" />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <label className="block text-sm md:text-base font-semibold text-white/90 mb-2 md:mb-3 flex items-center gap-2">
+                <Mail className="w-4 h-4 md:w-5 md:h-5 text-softBlue" />
                 Email
               </label>
               <Input
@@ -105,13 +122,17 @@ export default function SignUpPage() {
                   setFormData({ ...formData, email: e.target.value })
                 }
                 required
-                className="w-full"
+                className="w-full text-base"
                 placeholder="your@email.com"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-white/90 mb-2 flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <label className="block text-sm md:text-base font-semibold text-white/90 mb-2 md:mb-3 flex items-center gap-2">
+                <Calendar className="w-4 h-4 md:w-5 md:h-5 text-softBlue" />
                 Age
               </label>
               <NumberInput
@@ -129,18 +150,22 @@ export default function SignUpPage() {
                   setFormData({ ...formData, age: Math.max(currentAge - 1, 13).toString() })
                 }}
                 required
-                className="w-full"
+                className="w-full text-base"
                 placeholder="16"
               />
               {age < 16 && age >= 13 && (
-                <p className="text-sm text-softBlue/80 mt-2 flex items-center gap-1">
+                <p className="text-sm md:text-base text-softBlue/80 mt-2 flex items-center gap-1">
                   <span>ℹ️</span> Guardian consent required for users under 16
                 </p>
               )}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-white/90 mb-2 flex items-center gap-2">
-                <Lock className="w-4 h-4" />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <label className="block text-sm md:text-base font-semibold text-white/90 mb-2 md:mb-3 flex items-center gap-2">
+                <Lock className="w-4 h-4 md:w-5 md:h-5 text-softBlue" />
                 Password
               </label>
               <Input
@@ -151,10 +176,10 @@ export default function SignUpPage() {
                 }
                 required
                 minLength={8}
-                className="w-full"
+                className="w-full text-base"
                 placeholder="••••••••"
               />
-            </div>
+            </motion.div>
             {error && (
               <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
                 <p className="text-red-400 text-sm text-center">{error}</p>
@@ -164,11 +189,93 @@ export default function SignUpPage() {
               type="submit" 
               variant="gradient" 
               className="w-full" 
-              disabled={loading}
+              disabled={loading || oauthLoading !== null}
             >
               {loading ? "Creating account..." : "Create Account"}
             </GlassButton>
           </form>
+
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-700"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-gray-800 text-white/60">Or continue with</span>
+            </div>
+          </div>
+
+          {/* OAuth Buttons */}
+          <div className="space-y-3">
+            <GlassButton
+              variant="ghost"
+              className="w-full justify-center gap-3"
+              onClick={async () => {
+                setOauthLoading("google")
+                setError("")
+                try {
+                  await signInWithGoogle()
+                  router.push("/dashboard")
+                } catch (err: any) {
+                  setError(err.message || "Failed to sign in with Google")
+                } finally {
+                  setOauthLoading(null)
+                }
+              }}
+              disabled={loading || oauthLoading !== null}
+            >
+              <Chrome className="w-5 h-5" />
+              <span className="font-semibold">
+                {oauthLoading === "google" ? "Signing in..." : "Continue with Google"}
+              </span>
+            </GlassButton>
+
+            <GlassButton
+              variant="ghost"
+              className="w-full justify-center gap-3"
+              onClick={async () => {
+                setOauthLoading("github")
+                setError("")
+                try {
+                  await signInWithGitHub()
+                  router.push("/dashboard")
+                } catch (err: any) {
+                  setError(err.message || "Failed to sign in with GitHub")
+                } finally {
+                  setOauthLoading(null)
+                }
+              }}
+              disabled={loading || oauthLoading !== null}
+            >
+              <Github className="w-5 h-5" />
+              <span className="font-semibold">
+                {oauthLoading === "github" ? "Signing in..." : "Continue with GitHub"}
+              </span>
+            </GlassButton>
+
+            <GlassButton
+              variant="ghost"
+              className="w-full justify-center gap-3"
+              onClick={async () => {
+                setOauthLoading("microsoft")
+                setError("")
+                try {
+                  await signInWithMicrosoft()
+                  router.push("/dashboard")
+                } catch (err: any) {
+                  setError(err.message || "Failed to sign in with Microsoft")
+                } finally {
+                  setOauthLoading(null)
+                }
+              }}
+              disabled={loading || oauthLoading !== null}
+            >
+              <Building2 className="w-5 h-5" />
+              <span className="font-semibold">
+                {oauthLoading === "microsoft" ? "Signing in..." : "Continue with Microsoft"}
+              </span>
+            </GlassButton>
+          </div>
 
           <div className="mt-6 text-center">
             <p className="text-white/60 text-sm">
@@ -182,6 +289,7 @@ export default function SignUpPage() {
             </p>
           </div>
         </GlassCard>
+      </div>
 
       <GlassModal
         isOpen={showGuardianModal}
@@ -228,7 +336,6 @@ export default function SignUpPage() {
           </div>
         </div>
       </GlassModal>
-    </div>
     </div>
   )
 }

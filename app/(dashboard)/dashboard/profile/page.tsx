@@ -114,11 +114,19 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold text-white mb-2">Profile & Settings</h1>
-        <p className="text-white/70">Manage your account, rewards, and privacy</p>
-      </div>
+    <div className="space-y-6 md:space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6 md:mb-8"
+      >
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2 md:mb-4 leading-tight bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent">
+          Profile & Settings
+        </h1>
+        <p className="text-base sm:text-lg md:text-xl text-white/60 font-medium">
+          Manage your account, rewards, and privacy
+        </p>
+      </motion.div>
 
       {/* Profile Card */}
       {user && (
@@ -203,8 +211,8 @@ export default function ProfilePage() {
               <Shield className="w-6 h-6 text-calmPurple" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white">Privacy & Data</h2>
-              <p className="text-white/70">Manage your data and privacy settings</p>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">Privacy & Data</h2>
+              <p className="text-base md:text-lg text-white/60 font-medium">Manage your data and privacy settings</p>
             </div>
           </div>
 

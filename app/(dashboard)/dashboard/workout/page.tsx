@@ -122,11 +122,19 @@ export default function WorkoutPage() {
   const weeklyDuration = weeklyWorkouts.reduce((sum, w) => sum + w.duration, 0)
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold text-white mb-2">Workout & Health</h1>
-        <p className="text-white/70">Track your workouts and nutrition</p>
-      </div>
+    <div className="space-y-6 md:space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6 md:mb-8"
+      >
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2 md:mb-4 leading-tight bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent">
+          Workout & Health
+        </h1>
+        <p className="text-base sm:text-lg md:text-xl text-white/60 font-medium">
+          Track your workouts and nutrition
+        </p>
+      </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <GlassCard>
@@ -143,33 +151,45 @@ export default function WorkoutPage() {
           </div>
         </GlassCard>
 
-        <GlassCard>
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-calmPurple/20 rounded-xl">
-              <Activity className="w-6 h-6 text-calmPurple" />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <GlassCard>
+            <div className="flex items-center gap-4">
+              <div className="p-3 md:p-4 bg-gradient-to-br from-calmPurple/20 to-calmPurple/10 rounded-xl">
+                <Activity className="w-5 h-5 md:w-6 md:h-6 text-calmPurple" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs sm:text-sm text-white/60 font-medium mb-1">Total Time</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-black text-white truncate">
+                  {weeklyDuration} min
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-white/70">Total Time</p>
-              <p className="text-2xl font-bold text-white">
-                {weeklyDuration} min
-              </p>
-            </div>
-          </div>
-        </GlassCard>
+          </GlassCard>
+        </motion.div>
 
-        <GlassCard>
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-softBlue/20 rounded-xl">
-              <Utensils className="w-6 h-6 text-softBlue" />
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <GlassCard>
+            <div className="flex items-center gap-4">
+              <div className="p-3 md:p-4 bg-gradient-to-br from-softBlue/20 to-softBlue/10 rounded-xl">
+                <Utensils className="w-5 h-5 md:w-6 md:h-6 text-softBlue" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs sm:text-sm text-white/60 font-medium mb-1">Calories Burned</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-black text-white truncate">
+                  {weeklyCalories} kcal
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-white/70">Calories Burned</p>
-              <p className="text-2xl font-bold text-white">
-                {weeklyCalories} kcal
-              </p>
-            </div>
-          </div>
-        </GlassCard>
+          </GlassCard>
+        </motion.div>
       </div>
 
       <div className="flex gap-2 mb-4">
@@ -191,11 +211,16 @@ export default function WorkoutPage() {
 
       {activeTab === "workout" && (
         <GlassCard>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-white">Workout History</h2>
-            <GlassButton variant="gradient" onClick={() => setShowWorkoutModal(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Log Workout
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-softBlue/20 to-calmPurple/20 rounded-lg">
+                <Activity className="w-5 h-5 text-softBlue" />
+              </div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">Workout History</h2>
+            </div>
+            <GlassButton variant="gradient" size="lg" onClick={() => setShowWorkoutModal(true)} className="group">
+              <Plus className="w-4 h-4 md:w-5 md:h-5 mr-2 transition-transform group-hover:rotate-90" />
+              <span className="font-semibold">Log Workout</span>
             </GlassButton>
           </div>
           <div className="space-y-3">
@@ -234,11 +259,16 @@ export default function WorkoutPage() {
 
       {activeTab === "nutrition" && (
         <GlassCard>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-white">Food Log</h2>
-            <GlassButton variant="gradient" onClick={() => setShowFoodModal(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Food
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-calmPurple/20 to-softBlue/20 rounded-lg">
+                <Utensils className="w-5 h-5 text-calmPurple" />
+              </div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">Food Log</h2>
+            </div>
+            <GlassButton variant="gradient" size="lg" onClick={() => setShowFoodModal(true)} className="group">
+              <Plus className="w-4 h-4 md:w-5 md:h-5 mr-2 transition-transform group-hover:rotate-90" />
+              <span className="font-semibold">Add Food</span>
             </GlassButton>
           </div>
           <div className="space-y-3">

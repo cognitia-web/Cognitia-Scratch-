@@ -32,10 +32,11 @@
     @apply border-border;
   }
   body {
-    @apply text-charcoal;
+    @apply text-white;
     min-height: 100vh;
     background: #0a0a0a; /* Dark base for aurora effect */
     position: relative;
+    color: white;
   }
 }
 
@@ -52,6 +53,21 @@
   
   .glass-card {
     @apply glass glass-hover p-6;
+  }
+
+  /* Gradient animation */
+  @keyframes gradient {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
   }
 }
 

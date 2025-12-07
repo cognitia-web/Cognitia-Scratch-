@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import GlassCard from "@/components/glass/GlassCard"
 import GlassButton from "@/components/glass/GlassButton"
-import { Plus, Trash2, Edit } from "lucide-react"
+import { Plus, Trash2, Edit, CheckSquare, Target } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import GlassModal from "@/components/glass/GlassModal"
 import { Input } from "@/components/ui/input"
@@ -25,6 +25,8 @@ export default function TasksPage() {
   const [showTaskModal, setShowTaskModal] = useState(false)
   const [showHabitModal, setShowHabitModal] = useState(false)
   const [editingTask, setEditingTask] = useState<Task | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -38,17 +40,32 @@ export default function TasksPage() {
   })
 
   useEffect(() => {
-    fetchTasks()
-    fetchHabits()
+    setLoading(true)
+    setError(null)
+    Promise.all([fetchTasks(), fetchHabits()])
+      .finally(() => setLoading(false))
   }, [])
 
   const fetchTasks = async () => {
     try {
       const { apiRequest } = await import("@/lib/api-client")
       const data = await apiRequest("/api/tasks")
-      setTasks(data)
-    } catch (error) {
+      if (Array.isArray(data)) {
+        setTasks(data)
+        setError(null)
+      } else {
+        console.error("Invalid tasks data:", data)
+        setTasks([])
+        setError("Failed to load tasks. Invalid data format.")
+      }
+    } catch (error: any) {
       console.error("Failed to fetch tasks:", error)
+      setTasks([])
+      const errorMsg = error.message || "Failed to load tasks"
+      setError(errorMsg)
+      if (error.message?.includes("not authenticated")) {
+        setError("Please sign in to view your tasks")
+      }
     }
   }
 
@@ -56,9 +73,16 @@ export default function TasksPage() {
     try {
       const { apiRequest } = await import("@/lib/api-client")
       const data = await apiRequest("/api/habits")
-      setHabits(data)
-    } catch (error) {
+      if (Array.isArray(data)) {
+        setHabits(data)
+      } else {
+        console.error("Invalid habits data:", data)
+        setHabits([])
+      }
+    } catch (error: any) {
       console.error("Failed to fetch habits:", error)
+      setHabits([])
+      // Don't set error state for habits, just log it
     }
   }
 
@@ -166,11 +190,17 @@ export default function TasksPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 md:space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+      >
         <div>
-          <h1 className="text-4xl font-bold text-white mb-2">Tasks & Habits</h1>
-          <p className="text-white/70">Manage your daily tasks and build consistent habits</p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2 md:mb-4 leading-tight bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent">
+            Tasks & Habits
+          </h1>
+          <p className="text-base sm:text-lg md:text-xl text-white/60 font-medium">Manage your daily tasks and build consistent habits</p>
         </div>
         <div className="flex gap-3">
           <GlassButton variant="secondary" onClick={() => setShowHabitModal(true)}>
@@ -192,12 +222,37 @@ export default function TasksPage() {
             New Task
           </GlassButton>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GlassCard>
-          <h2 className="text-2xl font-bold text-white mb-4">Tasks</h2>
-          <div className="space-y-3">
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 bg-red-500/20 border border-red-500/30 rounded-xl"
+        >
+          <p className="text-red-400 text-sm">{error}</p>
+        </motion.div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <GlassCard>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-softBlue/20 to-calmPurple/20 rounded-lg">
+                <CheckSquare className="w-5 h-5 text-softBlue" />
+              </div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">Tasks</h2>
+            </div>
+            {loading ? (
+              <div className="text-center py-8">
+                <p className="text-white/50">Loading tasks...</p>
+              </div>
+            ) : (
+            <div className="space-y-3">
             <AnimatePresence>
               {tasks.map((task) => (
                 <motion.div
@@ -250,11 +305,23 @@ export default function TasksPage() {
               </p>
             )}
           </div>
-        </GlassCard>
+          )}
+          </GlassCard>
+        </motion.div>
 
-        <GlassCard>
-          <h2 className="text-2xl font-bold text-white mb-4">Habits</h2>
-          <div className="space-y-3">
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <GlassCard>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-calmPurple/20 to-softBlue/20 rounded-lg">
+                <Target className="w-5 h-5 text-calmPurple" />
+              </div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">Habits</h2>
+            </div>
+            <div className="space-y-3">
             {habits.map((habit) => (
               <div
                 key={habit.id}
@@ -282,7 +349,8 @@ export default function TasksPage() {
               </p>
             )}
           </div>
-        </GlassCard>
+          </GlassCard>
+        </motion.div>
       </div>
 
       <GlassModal

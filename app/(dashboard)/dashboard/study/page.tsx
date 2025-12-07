@@ -115,32 +115,46 @@ export default function StudyPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold text-white mb-2">AI Study Assistant</h1>
-        <p className="text-white/70">Get help with your studies, plan exams, and review flashcards</p>
-      </div>
+    <div className="space-y-6 md:space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6 md:mb-8"
+      >
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2 md:mb-4 leading-tight bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent">
+          AI Study Assistant
+        </h1>
+        <p className="text-base sm:text-lg md:text-xl text-white/60 font-medium">
+          Get help with your studies, plan exams, and review flashcards
+        </p>
+      </motion.div>
 
-      <div className="flex gap-2 mb-4">
+      <div className="flex flex-wrap gap-2 md:gap-3 mb-6">
         <GlassButton
           variant={activeTab === "chat" ? "gradient" : "ghost"}
+          size="lg"
           onClick={() => setActiveTab("chat")}
+          className="group"
         >
-          Chat
+          <span className="font-semibold">Chat</span>
         </GlassButton>
         <GlassButton
           variant={activeTab === "exams" ? "gradient" : "ghost"}
+          size="lg"
           onClick={() => setActiveTab("exams")}
+          className="group"
         >
-          <Calendar className="w-4 h-4 mr-2" />
-          Exams
+          <Calendar className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+          <span className="font-semibold">Exams</span>
         </GlassButton>
         <GlassButton
           variant={activeTab === "flashcards" ? "gradient" : "ghost"}
+          size="lg"
           onClick={() => setActiveTab("flashcards")}
+          className="group"
         >
-          <BookOpen className="w-4 h-4 mr-2" />
-          Flashcards
+          <BookOpen className="w-4 h-4 md:w-5 md:h-5 mr-2" />
+          <span className="font-semibold">Flashcards</span>
         </GlassButton>
       </div>
 
@@ -202,7 +216,12 @@ export default function StudyPage() {
           </GlassCard>
 
           <GlassCard>
-            <h2 className="text-xl font-bold text-white mb-4">Quick Actions</h2>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-softBlue/20 to-calmPurple/20 rounded-lg">
+                <Send className="w-5 h-5 text-softBlue" />
+              </div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">Quick Actions</h2>
+            </div>
             <div className="space-y-3">
               <GlassButton
                 variant="ghost"
@@ -337,11 +356,16 @@ export default function StudyPage() {
 
       {activeTab === "exams" && (
         <GlassCard>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-white">Upcoming Exams</h2>
-            <GlassButton variant="gradient" onClick={() => setShowExamModal(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Exam
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-calmPurple/20 to-softBlue/20 rounded-lg">
+                <Calendar className="w-5 h-5 text-calmPurple" />
+              </div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">Upcoming Exams</h2>
+            </div>
+            <GlassButton variant="gradient" size="lg" onClick={() => setShowExamModal(true)} className="group">
+              <Plus className="w-4 h-4 md:w-5 md:h-5 mr-2 transition-transform group-hover:rotate-90" />
+              <span className="font-semibold">Add Exam</span>
             </GlassButton>
           </div>
           <div className="space-y-3">
@@ -382,11 +406,16 @@ export default function StudyPage() {
 
       {activeTab === "flashcards" && (
         <GlassCard>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-white">Flashcards</h2>
-            <GlassButton variant="gradient" onClick={() => setShowFlashcardModal(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Flashcard
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-softBlue/20 to-calmPurple/20 rounded-lg">
+                <BookOpen className="w-5 h-5 text-softBlue" />
+              </div>
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">Flashcards</h2>
+            </div>
+            <GlassButton variant="gradient" size="lg" onClick={() => setShowFlashcardModal(true)} className="group">
+              <Plus className="w-4 h-4 md:w-5 md:h-5 mr-2 transition-transform group-hover:rotate-90" />
+              <span className="font-semibold">Create Flashcard</span>
             </GlassButton>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

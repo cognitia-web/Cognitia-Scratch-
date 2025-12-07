@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import GlassCard from "@/components/glass/GlassCard"
 import { Users, Calendar, TrendingUp } from "lucide-react"
+import { motion } from "framer-motion"
 
 interface Report {
   id: string
@@ -37,11 +38,19 @@ export default function GuardianPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold text-white mb-2">Guardian Dashboard</h1>
-        <p className="text-white/70">View progress reports for your students</p>
-      </div>
+    <div className="space-y-6 md:space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6 md:mb-8"
+      >
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2 md:mb-4 leading-tight bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent">
+          Guardian Dashboard
+        </h1>
+        <p className="text-base sm:text-lg md:text-xl text-white/60 font-medium">
+          View progress reports for your students
+        </p>
+      </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <GlassCard>
@@ -94,7 +103,12 @@ export default function GuardianPage() {
       </div>
 
         <GlassCard>
-          <h2 className="text-2xl font-bold text-white mb-4">Daily Reports</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-softBlue/20 to-calmPurple/20 rounded-lg">
+              <Calendar className="w-5 h-5 text-softBlue" />
+            </div>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">Daily Reports</h2>
+          </div>
           <div className="space-y-4">
             {reports.map((report) => (
               <div

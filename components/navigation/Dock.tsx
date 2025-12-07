@@ -28,36 +28,41 @@ export default function Dock() {
   const pathname = usePathname()
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
-      <GlassSurface className="px-4 py-3">
-        <nav className="flex items-center gap-2">
+    <div className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-50">
+      <GlassSurface className="px-3 sm:px-4 py-2 sm:py-3 backdrop-blur-xl border-white/10 shadow-2xl">
+        <nav className="flex items-center gap-1 sm:gap-2">
           {navItems.map((item) => {
             const isActive = pathname === item.href
             const Icon = item.icon
 
             return (
-              <Link
+              <motion.div
                 key={item.name}
-                href={item.href}
-                className={`
-                  relative flex items-center justify-center
-                  w-12 h-12 rounded-xl
-                  transition-all duration-200
-                  ${isActive 
-                    ? "bg-gray-700 scale-110" 
-                    : "hover:bg-gray-700 hover:scale-105"
-                  }
-                `}
+                whileHover={{ scale: 1.1, y: -2 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <Icon className={`w-5 h-5 ${isActive ? "text-white" : "text-white/70"}`} />
-                {isActive && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-gray-700 rounded-xl -z-10"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-              </Link>
+                <Link
+                  href={item.href}
+                  className={`
+                    relative flex items-center justify-center
+                    w-10 h-10 sm:w-12 sm:h-12 rounded-xl
+                    transition-all duration-300
+                    ${isActive 
+                      ? "bg-gradient-to-br from-softBlue/30 to-calmPurple/30 scale-110" 
+                      : "hover:bg-gray-700/50"
+                    }
+                  `}
+                >
+                  <Icon className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${isActive ? "text-softBlue" : "text-white/70 hover:text-white"}`} />
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-gradient-to-br from-softBlue/20 to-calmPurple/20 rounded-xl -z-10 border border-softBlue/30"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                </Link>
+              </motion.div>
             )
           })}
         </nav>

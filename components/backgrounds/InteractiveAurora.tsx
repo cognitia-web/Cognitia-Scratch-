@@ -7,7 +7,7 @@ export default function InteractiveAurora() {
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    if (!canvas || typeof window === "undefined") return
 
     const ctx = canvas.getContext("2d")
     if (!ctx) return
@@ -16,6 +16,7 @@ export default function InteractiveAurora() {
     let time = 0
 
     const resize = () => {
+      if (!canvas) return
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
     }
@@ -23,6 +24,7 @@ export default function InteractiveAurora() {
     window.addEventListener("resize", resize)
 
     const draw = () => {
+      if (!canvas || !ctx) return
       time += 0.01
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 

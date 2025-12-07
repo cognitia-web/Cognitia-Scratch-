@@ -98,45 +98,59 @@ export default function FocusPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold text-white mb-2">Focus Mode</h1>
-        <p className="text-white/70">Stay focused with Pomodoro timer and ambient sounds</p>
-      </div>
+    <div className="space-y-6 md:space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6 md:mb-8"
+      >
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2 md:mb-4 leading-tight bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent">
+          Focus Mode
+        </h1>
+        <p className="text-base sm:text-lg md:text-xl text-white/60 font-medium">
+          Stay focused with Pomodoro timer and ambient sounds
+        </p>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <GlassCard className="lg:col-span-2">
           <div className="text-center">
-            <div className="flex justify-center gap-4 mb-6">
+            <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-6 md:mb-8">
               <GlassButton
                 variant={mode === "pomodoro" ? "gradient" : "ghost"}
+                size="lg"
                 onClick={() => {
                   setMode("pomodoro")
                   setTime(POMODORO_DURATION)
                   setIsRunning(false)
                 }}
+                className="group"
               >
-                Pomodoro
+                <span className="font-semibold">Pomodoro</span>
               </GlassButton>
               <GlassButton
                 variant={mode === "shortBreak" ? "gradient" : "ghost"}
+                size="lg"
                 onClick={() => {
                   setMode("shortBreak")
                   setTime(SHORT_BREAK)
                   setIsRunning(false)
                 }}
+                className="group"
               >
-                Short Break
+                <span className="font-semibold">Short Break</span>
               </GlassButton>
               <GlassButton
                 variant={mode === "longBreak" ? "gradient" : "ghost"}
+                size="lg"
                 onClick={() => {
                   setMode("longBreak")
                   setTime(LONG_BREAK)
                   setIsRunning(false)
                 }}
+                className="group"
               >
-                Long Break
+                <span className="font-semibold">Long Break</span>
               </GlassButton>
             </div>
 
@@ -146,10 +160,10 @@ export default function FocusPage() {
               animate={{ scale: 1 }}
               className="mb-8"
             >
-              <div className="text-8xl font-bold bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent mb-4">
+              <div className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent mb-4 md:mb-6">
                 {formatTime(time)}
               </div>
-              <p className="text-white/70 capitalize">{mode.replace(/([A-Z])/g, " $1")}</p>
+              <p className="text-base sm:text-lg md:text-xl text-white/60 font-medium capitalize">{mode.replace(/([A-Z])/g, " $1")}</p>
             </motion.div>
 
             <div className="flex justify-center gap-4">
@@ -176,15 +190,24 @@ export default function FocusPage() {
               </GlassButton>
             </div>
 
-            <div className="mt-8 p-4 bg-gray-800 rounded-xl border border-gray-700">
-              <p className="text-sm text-white/70 mb-2">Sessions Completed Today</p>
-              <p className="text-3xl font-bold text-white">{sessions}</p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="mt-8 p-4 md:p-6 bg-gray-800/50 rounded-xl border border-gray-700/50 hover:border-softBlue/50 transition-all duration-300"
+            >
+              <p className="text-sm md:text-base text-white/60 mb-2 font-medium">Sessions Completed Today</p>
+              <p className="text-3xl md:text-4xl font-black bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent">{sessions}</p>
+            </motion.div>
           </div>
         </GlassCard>
 
         <GlassCard>
-          <h2 className="text-2xl font-bold text-white mb-4">Ambient Sounds</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-calmPurple/20 to-softBlue/20 rounded-lg">
+              <Volume2 className="w-5 h-5 text-calmPurple" />
+            </div>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">Ambient Sounds</h2>
+          </div>
           <div className="space-y-3">
             <div className="flex items-center justify-between mb-4">
               <span className="text-white">White Noise</span>

@@ -96,7 +96,7 @@ export default function SignOutPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-4xl md:text-5xl font-bold text-white mb-6"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-6 bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent"
             >
               You've Got This! 💪
             </motion.h1>
@@ -105,12 +105,12 @@ export default function SignOutPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="mb-8"
+              className="mb-8 md:mb-12"
             >
-              <p className="text-2xl md:text-3xl font-semibold text-white/90 mb-4 italic">
+              <p className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white/90 mb-4 md:mb-6 italic leading-relaxed">
                 &ldquo;{quote.quote}&rdquo;
               </p>
-              <p className="text-lg text-white/70">
+              <p className="text-base sm:text-lg md:text-xl text-white/60 font-medium">
                 — {quote.author}
               </p>
             </motion.div>

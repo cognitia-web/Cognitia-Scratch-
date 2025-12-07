@@ -7,6 +7,10 @@ import {
   signOut as firebaseSignOut,
   sendPasswordResetEmail,
   updateProfile,
+  signInWithPopup,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  OAuthProvider,
   User,
   UserCredential
 } from "firebase/auth"
@@ -70,5 +74,82 @@ export async function getCurrentUser(): Promise<User | null> {
       resolve(user)
     })
   })
+}
+
+// OAuth Providers
+const googleProvider = new GoogleAuthProvider()
+const githubProvider = new GithubAuthProvider()
+const microsoftProvider = new OAuthProvider('microsoft.com')
+
+export async function signInWithGoogle() {
+  try {
+    const result = await signInWithPopup(auth, googleProvider)
+    const user = result.user
+    
+    // Create or update user in database
+    await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        email: user.email, 
+        name: user.displayName || user.email?.split("@")[0] || "User",
+        age: 18, // Default age for OAuth users
+        uid: user.uid,
+        provider: "google"
+      }),
+    })
+    
+    return user
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to sign in with Google")
+  }
+}
+
+export async function signInWithGitHub() {
+  try {
+    const result = await signInWithPopup(auth, githubProvider)
+    const user = result.user
+    
+    // Create or update user in database
+    await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        email: user.email, 
+        name: user.displayName || user.email?.split("@")[0] || "User",
+        age: 18, // Default age for OAuth users
+        uid: user.uid,
+        provider: "github"
+      }),
+    })
+    
+    return user
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to sign in with GitHub")
+  }
+}
+
+export async function signInWithMicrosoft() {
+  try {
+    const result = await signInWithPopup(auth, microsoftProvider)
+    const user = result.user
+    
+    // Create or update user in database
+    await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        email: user.email, 
+        name: user.displayName || user.email?.split("@")[0] || "User",
+        age: 18, // Default age for OAuth users
+        uid: user.uid,
+        provider: "microsoft"
+      }),
+    })
+    
+    return user
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to sign in with Microsoft")
+  }
 }
 

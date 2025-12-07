@@ -59,15 +59,28 @@ export default function CoursesPage() {
   ]
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-4xl font-bold text-white mb-2">Life Skill Courses</h1>
-        <p className="text-white/70">Learn new skills and track your progress</p>
-      </div>
+    <div className="space-y-6 md:space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6 md:mb-8"
+      >
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white mb-2 md:mb-4 leading-tight bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent">
+          Life Skill Courses
+        </h1>
+        <p className="text-base sm:text-lg md:text-xl text-white/60 font-medium">
+          Learn new skills and track your progress
+        </p>
+      </motion.div>
 
       {myCourses.length > 0 && (
         <GlassCard>
-          <h2 className="text-2xl font-bold text-white mb-4">My Courses</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-softBlue/20 to-calmPurple/20 rounded-lg">
+              <BookOpen className="w-5 h-5 text-softBlue" />
+            </div>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">My Courses</h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {myCourses.map((course) => (
               <Link
@@ -112,7 +125,12 @@ export default function CoursesPage() {
       )}
 
         <GlassCard>
-          <h2 className="text-2xl font-bold text-white mb-4">Available Courses</h2>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-calmPurple/20 to-softBlue/20 rounded-lg">
+              <Award className="w-5 h-5 text-calmPurple" />
+            </div>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white">Available Courses</h2>
+          </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map((course, index) => (
             <motion.div

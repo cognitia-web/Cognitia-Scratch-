@@ -49,26 +49,30 @@ export default function GlassModal({
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", duration: 0.3 }}
               className={cn(
-                "bg-gray-800",
-                "border border-gray-700",
+                "bg-gray-800/95",
+                "border border-gray-700/50",
                 "shadow-2xl",
+                "shadow-softBlue/20",
                 "rounded-3xl",
-                "p-6",
+                "p-6 md:p-8",
                 "max-w-2xl w-full",
                 "max-h-[90vh] overflow-y-auto",
+                "backdrop-blur-xl",
                 className
               )}
               onClick={(e) => e.stopPropagation()}
             >
               {title && (
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-white">{title}</h2>
-                  <button
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl md:text-3xl font-black text-white bg-gradient-to-r from-softBlue to-calmPurple bg-clip-text text-transparent">{title}</h2>
+                  <motion.button
                     onClick={onClose}
-                    className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                    whileHover={{ scale: 1.1, rotate: 90 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="p-2 hover:bg-gray-700/50 rounded-lg transition-all duration-200"
                   >
                     <X className="w-5 h-5 text-white/70 hover:text-white" />
-                  </button>
+                  </motion.button>
                 </div>
               )}
               {children}

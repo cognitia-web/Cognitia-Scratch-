@@ -11,11 +11,11 @@ interface GlassButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>,
 const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
   ({ className, variant = "primary", size = "md", children, asChild, ...props }, ref) => {
     const variants = {
-      primary: "bg-gradient-to-r from-softBlue to-softBlue/80 text-white hover:from-softBlue/90 hover:to-softBlue/70 shadow-lg shadow-softBlue/20",
-      secondary: "bg-gradient-to-r from-calmPurple to-calmPurple/80 text-white hover:from-calmPurple/90 hover:to-calmPurple/70 shadow-lg shadow-calmPurple/20",
-      ghost: "bg-gray-700 text-white hover:bg-gray-600 border-gray-600",
-      gradient: "bg-gradient-to-r from-softBlue via-calmPurple to-softBlue text-white hover:shadow-lg hover:shadow-softBlue/30",
-      destructive: "bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20",
+      primary: "bg-gradient-to-r from-softBlue to-softBlue/80 text-white hover:from-softBlue hover:to-softBlue/90 shadow-lg shadow-softBlue/20 hover:shadow-softBlue/40",
+      secondary: "bg-gradient-to-r from-calmPurple to-calmPurple/80 text-white hover:from-calmPurple hover:to-calmPurple/90 shadow-lg shadow-calmPurple/20 hover:shadow-calmPurple/40",
+      ghost: "bg-gray-700/50 text-white hover:bg-gray-600/80 border-gray-600 hover:border-gray-500 backdrop-blur-sm",
+      gradient: "bg-gradient-to-r from-softBlue via-calmPurple to-softBlue text-white hover:shadow-xl hover:shadow-softBlue/40 bg-[length:200%_200%] hover:bg-[position:100%_50%] transition-all duration-500",
+      destructive: "bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/20 hover:shadow-red-600/40",
     }
 
     const sizes = {
@@ -31,14 +31,23 @@ const GlassButton = forwardRef<HTMLButtonElement, GlassButtonProps>(
       "transition-all duration-300",
       "relative overflow-hidden",
       "group",
+      "hover:scale-105",
+      "active:scale-95",
+      "shadow-lg",
+      "hover:shadow-xl",
+      "hover:shadow-softBlue/30",
       variants[variant],
       sizes[size],
       className
     )
 
     if (asChild && React.isValidElement(children)) {
-      return React.cloneElement(children as React.ReactElement, {
-        className: cn(baseClasses, (children as React.ReactElement).props?.className),
+      const child = children as React.ReactElement<any>
+      // Don't forward ref to Link components as they don't accept refs
+      const { ref: _, ...childProps } = child.props || {}
+      return React.cloneElement(child, {
+        ...childProps,
+        className: cn(baseClasses, child.props?.className),
       })
     }
 

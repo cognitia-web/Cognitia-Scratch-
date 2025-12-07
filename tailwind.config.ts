@@ -58,6 +58,19 @@ const config = {
         softBlue: "#6ECDFE",
         calmPurple: "#A188FF",
         charcoal: "#1A1A1A",
+        gray: {
+          50: "#f9fafb",
+          100: "#f3f4f6",
+          200: "#e5e7eb",
+          300: "#d1d5db",
+          400: "#9ca3af",
+          500: "#6b7280",
+          600: "#4b5563",
+          700: "#374151",
+          750: "#2d3748",
+          800: "#1f2937",
+          900: "#111827",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -73,10 +86,25 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "gradient": {
+          "0%, 100%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "pulse-glow": {
+          "0%, 100%": { opacity: "1", boxShadow: "0 0 20px rgba(110, 205, 254, 0.3)" },
+          "50%": { opacity: "0.8", boxShadow: "0 0 30px rgba(110, 205, 254, 0.5)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "gradient": "gradient 3s ease infinite",
+        "float": "float 3s ease-in-out infinite",
+        "pulse-glow": "pulse-glow 2s ease-in-out infinite",
       },
       backdropBlur: {
         xs: '2px',
