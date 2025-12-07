@@ -68,7 +68,7 @@
   "overrides": {
     "cookie": "^0.7.0",
     "glob": "^10.4.6"
-  }
+  },
     "scripts": {
       "postinstall": "prisma generate",
       "build": "next build",
